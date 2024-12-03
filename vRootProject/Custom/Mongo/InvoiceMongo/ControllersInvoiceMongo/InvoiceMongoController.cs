@@ -33,15 +33,15 @@ namespace vRootProject.Custom.Mongo.ProductMongoFile.ControllersInvoiceMongo
 
 
 
-        [HttpGet("GetCashierInvoiceByDate")]
-        public async Task<IActionResult> GetCashierInvoiceByDate([FromQuery] DateTime date)
+        [HttpGet("GetCashierInvoiceByDateAndBranchId")]
+        public async Task<IActionResult> GetCashierInvoiceByDate([FromQuery] DateTime date , int branchId)
         {
             if (date == DateTime.MinValue)
             {
                 return BadRequest("Please provide a valid date.");
             }
 
-            var invoices = await _ModelService.GetInvoicesByDateAsync(date);
+            var invoices = await _ModelService.GetInvoicesByDateAndBranchAsync(date , branchId);
 
             if (invoices == null || !invoices.Any())
             {

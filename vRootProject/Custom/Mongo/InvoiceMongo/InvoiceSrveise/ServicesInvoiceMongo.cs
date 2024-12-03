@@ -78,24 +78,30 @@ namespace vRootProject.Custom.Mongo.ProductMongoFile.ProductsSrveise
             return await _mongoModel.Find(product => true).ToListAsync();
         }
 
-        public async Task<List<InvoiceColection>> GetInvoicesByDateAsync(DateTime date)
+        public async Task<List<InvoiceColection>> GetInvoicesByDateAndBranchAsync(DateTime date, int branchId)
         {
             if (date == DateTime.MinValue)
             {
                 throw new ArgumentException("Invalid date provided.");
             }
 
+            if (branchId==null)
+            {
+                throw new ArgumentException("Branch ID cannot be null or empty.");
+            }
+
             // MongoDB filter
             var filter = Builders<InvoiceColection>.Filter.And(
                 Builders<InvoiceColection>.Filter.Gte(invoice => invoice.CreateDate, date.Date),
-                Builders<InvoiceColection>.Filter.Lt(invoice => invoice.CreateDate, date.Date.AddDays(1))
+                Builders<InvoiceColection>.Filter.Lt(invoice => invoice.CreateDate, date.Date.AddDays(1)),
+                Builders<InvoiceColection>.Filter.Eq(invoice => invoice.BranchId, branchId)
             );
 
-            // استرجاع البيانات
             var invoices = await _mongoModel.Find(filter).ToListAsync();
 
             return invoices;
         }
+
 
         public async Task<List<InvoiceColection>> GetInvoicesByDeliveryAsync(string deliveryId)
         {
